@@ -1,1 +1,5 @@
-console.log("testet")
+const menu = document.getElementById("menu")
+
+
+
+
