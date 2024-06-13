@@ -12,25 +12,27 @@ const addressWarn = document.getElementById("address-warn");
 let cart = [];
 
 /**Modal carrinho */
-cartBtn.addEventListener("click", function() {
+cartBtn.addEventListener("click", function () {
+    updateCartModal();
     cartModal.style.display = "flex"
+
 })
 
 /**Fechar o modal */
-cartModal.addEventListener("click", function(event) {
-    if(event.target === cartModal) {
+cartModal.addEventListener("click", function (event) {
+    if (event.target === cartModal) {
         cartModal.style.display = "none"
     }
 })
 
-closeModalBtn.addEventListener("click", function() {
+closeModalBtn.addEventListener("click", function () {
     cartModal.style.display = "none"
 })
 
-menu.addEventListener("click", function(event) {
+menu.addEventListener("click", function (event) {
     let parentButton = event.target.closest(".add-to-cart-btn")
 
-    if(parentButton){
+    if (parentButton) {
         const name = parentButton.getAttribute("data-name")
         const price = parseFloat(parentButton.getAttribute("data-price"))
 
@@ -42,16 +44,53 @@ menu.addEventListener("click", function(event) {
 function aaToCard(name, price) {
     const existingItem = cart.find(item => item.name === name)
 
-    if(existingItem){
+    if (existingItem) {
         existingItem.quantity += 1;
-        return;
     }
+    else {
+        cart.push({
+            name,
+            price,
+            quantity: 1,
+        })
+    }
+    updateCartModal()
+}
 
-    cart.push({
-        name,
-        price,
-        quantity: 1,
+/**Atualiza carrinho */
+function updateCartModal() {
+    cartItensContainer.innerHTML = "";
+    let total = 0;
+
+    cart.forEach(item => {
+        const cartItemElement = document.createElement("div")
+        cartItemElement.classList.add("flex", "justify-between", "mb-4", "flex-col")
+
+        cartItemElement.innerHTML = `
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="font-medium">${item.name}</p>
+                    <p>Qtd: ${item.quantity}</p>
+                    <p class="font-medium mt-2">R$ ${item.price.toFixed(2)}</p>
+                </div>
+
+                <div>
+                    <button>
+                        Remover
+                    </button>                
+                </div>
+            </div>
+        `
+        total += item.price * item.quantity;
+        cartItensContainer.appendChild(cartItemElement)
     })
+
+    cartTotal.textContent = total.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+    });
+
+    cartCount.innerHTML = cart.length;
 }
 
 
